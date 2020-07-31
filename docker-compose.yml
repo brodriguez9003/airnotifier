@@ -16,11 +16,11 @@ services:
       - ./mongo/log:/tmp/mongo
     command: mongod --logpath=/dev/null # --quiet
   airnotifier:
+    image: totara/airnotifier:3.x
     links:
       - mongodb
     depends_on:
       - mongodb
-    build: .
     container_name: airnotifier
     volumes:
       - ./certs:/var/airnotifier/pemdir
