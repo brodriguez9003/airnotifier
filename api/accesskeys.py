@@ -43,24 +43,18 @@ from util import *
 
 @route(r"/api/v2/accesskeys[\/]?")
 class AccessKeysV2Handler(APIBaseHandler):
-    def initialize(self):
-        self.accesskeyrequired = False
-        self._time_start = time.time()
-
     def post(self):
         """Create access key
         """
         try:
             data = json_decode(self.request.body)
 
-            # if not self.can('create_accesskey'):
-            # self.send_response(FORBIDDEN, dict(error="No permission to create accesskey"))
-            # return
+            if not self.can('create_accesskey'):
+                self.send_response(FORBIDDEN, dict(error="No permission to create accesskey"))
+                return
 
             processor = data.get("processor", None)
-            if not processor:
-                data["permission"] = 0
-            else:
+            if processor:
                 try:
                     proc = import_module("hooks." + processor)
                     data = proc.process_accesskey_payload(data)
@@ -72,7 +66,7 @@ class AccessKeysV2Handler(APIBaseHandler):
             key["contact"] = data.get("contact", "")
             key["description"] = data.get("description", "")
             key["created"] = int(time.time())
-            key["permission"] = data["permission"]
+            key["permission"] = data.get("permission", 0)
             key["key"] = create_access_key()
             self.db.keys.insert(key)
             self.send_response(OK, dict(accesskey=key["key"]))
