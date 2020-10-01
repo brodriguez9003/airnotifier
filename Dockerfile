@@ -10,7 +10,7 @@ RUN apt-get update && \
 
 RUN pip3 install pipenv
 
-RUN git clone -b 3.x https://github.com/totara/airnotifier.git /airnotifier
+RUN git clone -b 3.0.1 https://github.com/totara/airnotifier.git /airnotifier
 RUN mkdir -p /var/airnotifier/pemdir && \
     mkdir -p /var/log/airnotifier
 
